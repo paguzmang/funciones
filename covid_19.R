@@ -3,15 +3,15 @@
 covid_19<- function(H, A, D = 1, nuevo = T
                     , grafico = F ){
   
-  # Descripcion: Predice los nuevos casos de contagio del virus covid_19 y 
-  # su tendencia
-  
-  
   # Argumentos:
   
   # H: Los casos del dia de hoy
   
   # A: Los casos del dia de ayer
+  
+  # Los argumentos H y A deben ser los datos totales de los dias
+  # ya que si solo se ingresan los datos nuevos el argumento nuevo 
+  # va a dar un dato erroneo al si este es T 
   
   # D: El numero de dias en los
   #    que se desea ver la prediccion
@@ -33,7 +33,7 @@ covid_19<- function(H, A, D = 1, nuevo = T
     for(i in 1 : D){ 
       f<- H/A
       m<- H*f
-      t<- m-H
+      t<- -1*(m-H) # se multiplica por -1 para que no arroje
       A<- H
       H<- m
       rD[i, ]<- c(i,f,t)
