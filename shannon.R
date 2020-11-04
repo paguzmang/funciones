@@ -5,7 +5,7 @@ shannon <- function(x){
   # vector de abundancias por especie.
   
   # Argumentos:
-  # x = vector numerico de abundancias por especie. No pueden haber abundancias
+  # x = vector numerico de abundancias por especie. Pueden haber abundancias
   #     de cero.
   
   # Codigo:
