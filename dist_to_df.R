@@ -1,4 +1,4 @@
-dist.to.df <- function(x) {
+dist_to_df <- function(x) {
   
   # Descripcion:
   # Funcion que transforma una matriz de distancia (generada con
