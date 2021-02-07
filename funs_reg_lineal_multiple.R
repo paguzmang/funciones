@@ -32,7 +32,7 @@ anova_global <- function(x){
   rownames(d) <- c('Regresion', 'Residual', 'Total')  # Se asignan nombres de fila
   
   # Impresion del resultado
-  d
+  print(d, na.print = "")
 }
 
 # 
