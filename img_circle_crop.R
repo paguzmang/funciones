@@ -32,7 +32,7 @@ img_circle_crop <- function(img, file = "img.png", f = 0, col = "white"){
   w <- ii$width
   h <- ii$height
   z <- min(w,h)
-  if(w > h) {
+  if(w >= h) {
     a <- w*f
     while(a + z >= w) a <- a - 0.01*a
     b <- 0
