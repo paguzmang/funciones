@@ -32,14 +32,19 @@ img_circle_crop <- function(img, file = "img.png", f = 0, col = "white"){
   w <- ii$width
   h <- ii$height
   z <- min(w,h)
-  if(w >= h) {
-    a <- w*f
-    while(a + z >= w) a <- a - 0.01*a
-    b <- 0
-  } else{
+  if(w == z){
     a <- 0
-    b <- h*f
-    while(b + z >= h) b <- b - 0.01*b
+    b <- 0
+    } else{
+    if(w > h) {
+      a <- w*f
+      while(a + z >= w) a <- a - 0.01*a
+      b <- 0
+    } else{
+      a <- 0
+      b <- h*f
+      while(b + z >= h) b <- b - 0.01*b
+      }
   }
   
   geom <- paste0(z, "x", z, "+", a, "+", b)
