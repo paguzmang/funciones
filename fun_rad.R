@@ -1,5 +1,12 @@
 rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
   
+  # Abril 2023
+  # paguzmang
+  # En el contexto de distribucion de abundancia de especies en Ecologia de comunidades, 
+  # esta funcion realiza un RAD = Rank Abundance Distribucion. Entrega los datos para 
+  # hacer un grafico. Si hay grupos, entrega los datos organizados para ser graficados
+  # con ggplot2.
+  
   # Argumentos: ----
   # x = Abundancias por especie. Se permiten abundancias de cero. 
   #     Puede ser uno de los siguientes objetos:
