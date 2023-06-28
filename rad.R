@@ -61,6 +61,7 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
     #     multiplicar por 1000 no por 100 para expresar por cada 1000
     #     individuos.
 
+    if(is.null(names(x))) names(x) <- paste0('sp', 1:length(x))  # si no hay nombres que lo asigne
     x <- sort(x[x > 0], decreasing = decreasing)
     k <- 1:length(x)
     n <- sum(x)
