@@ -12,8 +12,8 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
   #     Puede ser uno de los siguientes objetos:
   #        - Vector nombrado de abundancias por especie.
   #        - Matriz de dos o mas columnas. Filas = especies, Columnas  = Sitios.
-  #        - Lista de dos o vectores. Cada vector es un vector de abundancias por especie
-  #            para un sitio.
+  #        - Lista de dos o mas vectores. Cada vector es un vector de abundancias por especie
+  #            para un sitio. La lista debe ser nombrada, es decir, names(x) no puede ser NULL
   # decreasing = Logico. Si TRUE, las especies se ordenan desde la mas
   #     abundante a la menos abundante. Si FALSE, se orden al contrario.
   # n_ind = cantidad de individuos para multiplicar por la frec. relativa
@@ -137,7 +137,7 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
   }
   
   if(l2){
-    res0 <- sapply(x, rad_v_to_df, decreasing = decreasing, n_ind = n_ind)
+    res0 <- sapply(x, rad_v_to_df, decreasing = decreasing, n_ind = n_ind, simplify = FALSE)
     dfg  <- data.frame(g = names(x))
     names(dfg) <- nom_grupo
     res  <- add_g_to_df_list(x = res0, g = dfg, res.df = T)
