@@ -61,7 +61,7 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
     #     multiplicar por 1000 no por 100 para expresar por cada 1000
     #     individuos.
 
-    x <- as.numeric(x)  # por si ponemos vectores con otras clases como aquellas generadas desde libreria entropart
+    class(x) <- NULL  # por si ponemos vectores con otras clases como aquellas generadas desde libreria entropart
     x <- sort(x[x > 0], decreasing = decreasing)
     k <- 1:length(x)
     n <- sum(x)
