@@ -30,7 +30,7 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
   
   # Codigo -----
   # Validacion del argumento x ----
-  v  <- is.vector(x)
+  v  <- is.atomic(x)
   m1 <- is.matrix(x)
   if(m1) m1 <- ncol(x) == 1
   m2 <- is.matrix(x)
