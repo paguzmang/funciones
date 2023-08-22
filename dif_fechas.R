@@ -16,8 +16,11 @@ dif_fechas <- function(f1, f2){
   f1 <- as.POSIXct(f1)
   f2 <- as.POSIXct(f2)
   d <- as.numeric(abs(f1 - f2))
+  solo.d <- floor(d)
+  dh <- (d - solo.d)*24
   data.frame(
-   horas =  d*24, dias = d, semanas = d/7
+   horas =  d*24, dias = d, semanas = d/7, 
+   dias_horas = paste0(solo.d, " días ", dh, " horas")
   )
   
   # Ejemplo:
