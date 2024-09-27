@@ -245,7 +245,7 @@ estima_coef_lm <- function(m, conf.level = 0.95){
   tab <- cbind(coef = rownames(tab), tab)
   row.names(tab) <- NULL
   conf <- conf.level*100
-  colnames(tab)[5:5] <- paste0("IC", conf, "_", c("L1", "L2")) 
+  colnames(tab)[4:5] <- paste0("IC", conf, "_", c("L1", "L2")) 
   
   # Impresion:
   tab
