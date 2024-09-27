@@ -133,7 +133,7 @@ mse <- function(x){
 }
 
 # 
-add_pred <- function(data, model, se = T, conf = 0.95){
+add_pred <- function(data, model, se = T, conf = 0.95, name_pred = "pred"){
   # Funcion que devuelve predicciones desde un objeto lm
   # organizadas en un data.frame, junto con error estandar
   # e IC, y ademas, el resultado tambien devuleve los valores de las
@@ -149,6 +149,7 @@ add_pred <- function(data, model, se = T, conf = 0.95){
   #      Por defecto si (TRUE).
   # conf = confianza (entre 0 y 1) para el IC de la prediccion. Por defecto: 0.95. 
   #      Si NULL, no se entrega IC
+  # name_pred = Cadena de texto con el nombre de la columna de las predicciones
   
   # Calculos
   w.conf <- is.null(conf) 
@@ -159,18 +160,26 @@ add_pred <- function(data, model, se = T, conf = 0.95){
     )
   if(se){
     res <- cbind(data, pred = yhat$fit[,1], se = yhat$se.fit, 
-                 lwr.ic = yhat$fit[,2], 
-                 upr.ic = yhat$fit[,3])
+                 L1 = yhat$fit[,2], 
+                 L2 = yhat$fit[,3])
   } else{
     res <- cbind(data, pred = yhat[,1],  
-                 lwr.ic = yhat[,2], 
-                 upr.ic = yhat[,3])
+                 L1 = yhat[,2], 
+                 L2 = yhat[,3])
   }
-
+  p <- ncol(data)
   k <- ncol(res)
+  colnames(res)[p+1] <- name_pred
   
   # Se imprime
-  if( is.null(conf) | isFALSE(conf) ) res[, -((k-1):k)] else res
+  if( w.conf ){
+    res[, -((k-1):k)]
+    } else{
+    conf <- conf*100
+    colnames(res)[(k-1):k] <- paste0("IC", conf, "_", c("L1", "L2")) 
+    res  
+    } 
+  
 }
 
 #
