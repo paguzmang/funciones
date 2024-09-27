@@ -133,7 +133,7 @@ mse <- function(x){
 }
 
 # 
-pred.org <- function(x, nd, conf = 0.95, todo = T, se = T, ic = F){
+add_pred <- function(data, model, se = T, conf = 0.95){
   # Funcion que devuelve predicciones desde un objeto lm
   # organizadas en un data.frame, junto con error estandar
   # e IC, y ademas, el resultado tambien devuleve los valores de las
@@ -141,25 +141,36 @@ pred.org <- function(x, nd, conf = 0.95, todo = T, se = T, ic = F){
   # de graficos.
   
   # Argumentos:
-  # x = objeto lm
-  # nd = data.frame con nuevos datos. Las columnas del data.frame
+  # data = data.frame con nuevos datos. Las columnas del data.frame
   #      deben tener los mismos nombres que las variables predictoras
-  #      en el objeto lm
-  # conf = confianza para el IC de la prediccion. Por defecto: 0.95
-  # todo = Logico. Indica si se imprime tabla con predictores y predicciones (TRUE)
-  #        o solo las predicciones (FALSE). Por defecto TRUE.
+  #      en el objeto lm. Pueden haber otras columnas.
+  # model = objeto lm
   # se = Logico. Indica si se imprime error estandar de las predicciones. 
   #      Por defecto si (TRUE).
-  # ic = Logico. Indica si se imprimen limites de un IC para la prediccione poblacional
-  #      Por defecto no (FALSE).
+  # conf = confianza (entre 0 y 1) para el IC de la prediccion. Por defecto: 0.95. 
+  #      Si NULL, no se entrega IC
   
-  # Codigo e impresion:
-  p <- ncol(nd)
-  i <- rep(T, p)
-  yhat <- predict(x, nd, se.fit = T, interval = 'confidence', level = conf)
-  res <- cbind(nd, Yhat = yhat$fit[,1], se = yhat$se.fit, lwr.ic = yhat$fit[,2], 
-               upr.ic = yhat$fit[,3])
-  if(todo) res[, c(i, T, se, ic, ic)] else res[, c(!i, T, se, ic, ic)]
+  # Calculos
+  w.conf <- is.null(conf) 
+  yhat <- predict(
+    object = model, newdata = data, se.fit = se, 
+    interval = 'confidence', 
+    level = ifelse(w.conf, 0.95, conf)
+    )
+  if(se){
+    res <- cbind(data, pred = yhat$fit[,1], se = yhat$se.fit, 
+                 lwr.ic = yhat$fit[,2], 
+                 upr.ic = yhat$fit[,3])
+  } else{
+    res <- cbind(data, pred = yhat[,1],  
+                 lwr.ic = yhat[,2], 
+                 upr.ic = yhat[,3])
+  }
+
+  k <- ncol(res)
+  
+  # Se imprime
+  if( is.null(conf) | isFALSE(conf) ) res[, -((k-1):k)] else res
 }
 
 #
