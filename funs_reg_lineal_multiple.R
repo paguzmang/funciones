@@ -240,12 +240,12 @@ estima_coef_lm <- function(m, conf.level = 0.95){
   # Codigo:
   tab <- as.data.frame(
     cbind(summary(m)$coef[, 1:2], 
-          df_error = df.residual(m),  confint(m) )
+          confint(m) )
   )
   tab <- cbind(coef = rownames(tab), tab)
   row.names(tab) <- NULL
   conf <- conf.level*100
-  colnames(tab)[5:6] <- paste0("IC", conf, "_", c("L1", "L2")) 
+  colnames(tab)[5:5] <- paste0("IC", conf, "_", c("L1", "L2")) 
   
   # Impresion:
   tab
