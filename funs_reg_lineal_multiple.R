@@ -1,5 +1,5 @@
 # 30-Sep-2018
-# Archivo con cinco funciones para aplicar en el contexto de Reg Lineal multiple
+# Archivo con funciones para aplicar en el contexto de Reg Lineal multiple
 # r2, pred.org y graficos.diag sirve para reg lineal simple
 #
 anova_global <- function(x){
@@ -22,14 +22,16 @@ anova_global <- function(x){
   
   # Se genera la tabla:
   d <- data.frame(
-    SS = round(c(SSReg, SSE, SST),4),
-    df = c(df.reg, df.error, df.tot),
-    MS = round(c(MSReg, MSE, NA),4),
-    Fcal = c(round(Fcal,2), NA, NA),
-    P = c(ifelse(valor.p < 0.001, '< 0.001', round(valor.p,4)), NA, NA),
-    stringsAsFactors = F
+    df = c(df.reg, df.error),
+    SS = c(SSReg, SSE),
+    MS = c(MSReg, MSE),
+    Fcal = c(Fcal, NA),
+    valor.p = c(valor.p, NA)
   )
-  rownames(d) <- c('Regresion', 'Residual', 'Total')  # Se asignan nombres de fila
+  
+  rownames(d) <- c('Model', 'Residuals')  # Se asignan nombres de fila
+  colnames(d) <- c("Df","Sum Sq" ,"Mean Sq", "F value", "Pr(>F)")
+  class(d) <- c("anova", "data.frame")
   
   # Impresion del resultado
   d
