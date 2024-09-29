@@ -2,9 +2,11 @@
 # Archivo con funciones para aplicar en el contexto de Reg Lineal multiple
 # r2, pred.org y graficos.diag sirve para reg lineal simple
 #
-anova_global <- function(x){
+anova_global <- function(x, f_test = TRUE){
   # anova global desde un objeto lm
   # x = objeto lm
+  # f_test = Logico. Si TRUE, resultan dos columnas adicionales
+  #   con la prueba F.
   
   # Calculos requeridos:
   y <- x$model[,1]        # var respuesta
@@ -21,17 +23,28 @@ anova_global <- function(x){
   valor.p <- pf(q = Fcal, df1 = df.reg, df2 = df.error, lower.tail = F)
   
   # Se genera la tabla:
-  d <- data.frame(
-    df = c(df.reg, df.error),
-    SS = c(SSReg, SSE),
-    MS = c(MSReg, MSE),
-    Fcal = c(Fcal, NA),
-    valor.p = c(valor.p, NA)
-  )
-  
-  rownames(d) <- c('Model', 'Residuals')  # Se asignan nombres de fila
-  colnames(d) <- c("Df","Sum Sq" ,"Mean Sq", "F value", "Pr(>F)")
-  class(d) <- c("anova", "data.frame")
+  if(f_test){
+    d <- data.frame(
+      df = c(df.reg, df.error),
+      SS = c(SSReg, SSE),
+      MS = c(MSReg, MSE),
+      Fcal = c(Fcal, NA),
+      valor.p = c(valor.p, NA)
+    )
+    rownames(d) <- c('Model', 'Residuals')  # Se asignan nombres de fila
+    colnames(d) <- c("Df","Sum Sq" ,"Mean Sq", "F value", "Pr(>F)")
+    class(d) <- c("anova", "data.frame")
+  } else{
+    d <- data.frame(
+      df = c(df.reg, df.error, df.tot),
+      SS = c(SSReg, SSE, SST),
+      MS = c(MSReg, MSE, NA)
+    )
+    rownames(d) <- c('Model', 'Residuals', 'Total')  # Se asignan nombres de fila
+    colnames(d) <- c("Df","Sum Sq" ,"Mean Sq")
+    class(d) <- c("anova", "data.frame")
+  }
+
   
   # Impresion del resultado
   d
