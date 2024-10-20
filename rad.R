@@ -60,14 +60,31 @@ rad <- function(x, decreasing = T, n_ind = 100, nom_grupo = 'grupo'){
     #     Sin embargo, si sum(x) > 1000, puede ser conveniente
     #     multiplicar por 1000 no por 100 para expresar por cada 1000
     #     individuos.
-
+    
     if(is.null(names(x))) names(x) <- paste0('sp', 1:length(x))  # si no hay nombres que lo asigne
-    x <- sort(x[x > 0], decreasing = decreasing)
+    x <- sort(x[x > 0], decreasing = T)
     k <- 1:length(x)
     n <- sum(x)
     sp <- names(x)
     names(x) <- NULL
-    data.frame(sp, k, f = x, fr = x / n * n_ind)
+    DF <- data.frame(sp, k, f = x, fr = x / n * n_ind)
+    DF$f_acum <- cumsum(DF$f)
+    DF$fr_acum <- cumsum(DF$fr)
+    
+    # Funcion para ordenar el data.frame resultante
+    ordena_df <- function(df, decreasing = F){
+      if(isFALSE(decreasing)){
+        df <- df[nrow(df):1, ]
+        row.names(df) <- NULL
+        df
+      } else{
+        df
+      }
+    }
+    
+    DF <- ordena_df(DF, decreasing = decreasing)
+    DF$sp <- factor(DF$sp, levels = DF$sp)
+    DF   # se imprime
     
   } # Fin de Fun 1
   
