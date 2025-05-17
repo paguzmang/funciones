@@ -1,5 +1,7 @@
-freq_table <- function(data, variable = 1, 
-                       breaks = c('auto', 'no')[1], dec_f = 4){
+freq_table <- function(data, variable = 1,
+                       breaks = c('auto', 'no')[1], 
+                       variable_name = "variable",
+                       dec_f = 4){
   
   # 21-ago-2024
   # pguzmang
@@ -18,6 +20,8 @@ freq_table <- function(data, variable = 1,
   #    intervalos a pesar de que la variable sea numérica. 'breaks' tambien puede
   #    ser un vector de tres o más números para definir de manera personalizada
   #    los intervalos.
+  # variable_name = Cadena de texto indicando el nombre de la variable en caso
+  #    de que "data" sea un vector.
   # dec_f = numero de decimales para imprimir la frec. relativa como fracción. 
   #    La frec. relativa en porcentaje se reporta con dos decimales siempre.
   
@@ -35,7 +39,8 @@ freq_table <- function(data, variable = 1,
   } else{
     if(is.v){
       y <- data
-      variable <- 'variable'
+      n <- length(y)
+      variable <- variable_name
     } else{
       stop('data debe ser un data.frame o un vector')
     }
