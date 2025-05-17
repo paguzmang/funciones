@@ -1,6 +1,7 @@
 freq_table <- function(data, variable = 1,
                        breaks = c('auto', 'no')[1], 
                        variable_name = "variable",
+                       group_by = NULL,
                        dec_f = 4){
   
   # 21-ago-2024
@@ -22,20 +23,59 @@ freq_table <- function(data, variable = 1,
   #    los intervalos.
   # variable_name = Cadena de texto indicando el nombre de la variable en caso
   #    de que "data" sea un vector.
+  # group_by = Indicador para entregar las frecuencias separadas por las categorias
+  #    de una variable categoria. Si "data" es un vector, "group_by" deberia ser
+  #    otro vector de la misma longitud que "data" con los valores de dicha variable.
+  #    Si "data" es un data.frame, "group_by" debería ser un indicador de la variable
+  #    de "data" que actuará como variable de grupo. Este indicador puede ser un número
+  #    indicando la posición, o una cadena de texto indicando el nombre.
   # dec_f = numero de decimales para imprimir la frec. relativa como fracción. 
   #    La frec. relativa en porcentaje se reporta con dos decimales siempre.
   
-  total <- TRUE
   require(tibble)
-  # Tipo de datos
   is.df <- is.data.frame(data) | is_tibble(data)
   is.v <- is.vector(data)
   
-  # Extraccion de los datos
+  # CASO CON AGRUPACIÓN
+  if (!is.null(group_by)) {
+    
+    # Si 'data' es un vector, group_by debe ser vector del mismo largo
+    if (is.v && !is.df) {
+      if (length(data) != length(group_by)) stop("group_by debe tener la misma longitud que data.")
+      df <- data.frame(.var = data, .grp = group_by)
+      out <- lapply(split(df, df$.grp), function(subdf){
+        freq_table(subdf$.var, variable_name = variable_name,
+                   breaks = breaks, dec_f = dec_f)
+      })
+      names(out) <- names(split(df, df$.grp))
+      return(out)
+    }
+    
+    # Si 'data' es un data.frame
+    if (is.df) {
+      if (is.numeric(group_by)) group_by <- names(data)[group_by]
+      if (!(group_by %in% names(data))) stop("group_by no es una columna válida del data.frame.")
+      groups <- unique(data[[group_by]])
+      out <- lapply(groups, function(gr){
+        subdata <- data[data[[group_by]] == gr, , drop = FALSE]
+        freq_table(subdata, variable = variable, 
+                   breaks = breaks, dec_f = dec_f,
+                   variable_name = variable_name,
+                   group_by = NULL)
+      })
+      names(out) <- as.character(groups)
+      return(out)
+    }
+  }
+  
+  # CASO SIN AGRUPACIÓN
+  total <- TRUE
+  
+  # Extracción
   if( is.df ) {
     n <- nrow(data)
     if(is.numeric(variable)) variable <- names(data)[variable] 
-    y <- data[, variable]
+    y <- data[[variable]]
   } else{
     if(is.v){
       y <- data
@@ -46,7 +86,6 @@ freq_table <- function(data, variable = 1,
     }
   }
   
-  # Cuando los datos son numericos
   y0 <- y
   if(is.numeric(y)){
     lu <- length(unique(y))
@@ -64,7 +103,6 @@ freq_table <- function(data, variable = 1,
     }
   }
   
-  # Tabla de frecuencia
   if(total) {
     tab <- as.data.frame(addmargins(xtabs( ~ y)))
     tab[, 1] <- as.character(tab[, 1])
@@ -85,10 +123,9 @@ freq_table <- function(data, variable = 1,
     tab$f_acum <- as.character(c(round(fa / n, dec_f), " "))
     tab$f_acum_pct <- as.character(c(round(fa / n *100, 2), " "))
   }
-  
-  # se imprime
-  tab
-  
+
+ # Se imprime
+ tab  
 }
 
 
