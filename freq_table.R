@@ -34,7 +34,7 @@ freq_table <- function(data, variable = 1,
   
     require(tibble)
   is.df <- is.data.frame(data) | is_tibble(data)
-  is.v <- is.vector(data)
+  is.v <- is.atomic(data) || is.factor(data)  # para que recibo factor o vector de texto
   
   # CASO CON AGRUPACIÓN
   if (!is.null(group_by)) {
