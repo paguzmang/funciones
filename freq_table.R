@@ -1,7 +1,7 @@
 freq_table <- function(data, variable = 1,
                        breaks = c('auto', 'no')[1], 
                        variable_name = "variable",
-                       group_by = NULL,
+                       group_by = NULL, order_by_freq = FALSE,
                        dec_f = 4){
   
   # 21-ago-2024
@@ -32,20 +32,21 @@ freq_table <- function(data, variable = 1,
   # dec_f = numero de decimales para imprimir la frec. relativa como fracción. 
   #    La frec. relativa en porcentaje se reporta con dos decimales siempre.
   
-  require(tibble)
+    require(tibble)
   is.df <- is.data.frame(data) | is_tibble(data)
   is.v <- is.vector(data)
   
   # CASO CON AGRUPACIÓN
   if (!is.null(group_by)) {
     
-    # Si 'data' es un vector, group_by debe ser vector del mismo largo
+    # Si 'data' es un vector
     if (is.v && !is.df) {
       if (length(data) != length(group_by)) stop("group_by debe tener la misma longitud que data.")
       df <- data.frame(.var = data, .grp = group_by)
       out <- lapply(split(df, df$.grp), function(subdf){
         freq_table(subdf$.var, variable_name = variable_name,
-                   breaks = breaks, dec_f = dec_f)
+                   breaks = breaks, dec_f = dec_f,
+                   order_by_freq = order_by_freq)
       })
       names(out) <- names(split(df, df$.grp))
       return(out)
@@ -61,7 +62,7 @@ freq_table <- function(data, variable = 1,
         freq_table(subdata, variable = variable, 
                    breaks = breaks, dec_f = dec_f,
                    variable_name = variable_name,
-                   group_by = NULL)
+                   order_by_freq = order_by_freq)
       })
       names(out) <- as.character(groups)
       return(out)
@@ -86,7 +87,7 @@ freq_table <- function(data, variable = 1,
     }
   }
   
-  y0 <- y
+  y0 <- y  # Original para validaciones
   if(is.numeric(y)){
     lu <- length(unique(y))
     lb <- length(breaks)
@@ -122,6 +123,18 @@ freq_table <- function(data, variable = 1,
     tab$n_acum <- as.character(c(fa, " "))
     tab$f_acum <- as.character(c(round(fa / n, dec_f), " "))
     tab$f_acum_pct <- as.character(c(round(fa / n *100, 2), " "))
+  }
+  
+  # Aplicar ordenamiento si es válido
+  if (order_by_freq) {
+    if (is.character(y0) || (is.factor(y0) && !is.ordered(y0))) {
+      total_row <- tab[tab[[variable]] == "Total", , drop = FALSE]
+      main_rows <- tab[tab[[variable]] != "Total", , drop = FALSE]
+      tab <- rbind(main_rows[order(-main_rows$n), ], total_row)
+      rownames(tab) <- NULL
+    } else {
+      warning("La opción 'order_by_freq = TRUE' fue ignorada porque la variable no es character ni factor no ordenado.")
+    }
   }
 
  # Se imprime
