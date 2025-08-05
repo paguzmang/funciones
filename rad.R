@@ -83,6 +83,7 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
   # Validacion del argumento x ----
   v  <- is.atomic(x) & (length(dim(x)) == 1 | is.null(dim(x)))
   m1 <- is.matrix(x) | is.data.frame(x)
+  if(m1) if(species_in_columns) x <- x[rowSums(x) > 0, , drop = FALSE] else x <- x[, colSums(x) > 0, drop = FALSE]
   if(m1) if(species_in_columns) m1 <- nrow(x) == 1 else m1 <- ncol(x) == 1
   m2 <- is.matrix(x) | is.data.frame(x)
   if(m2) if(species_in_columns) m2 <- nrow(x) >= 2 else m2 <- ncol(x) >= 2
@@ -374,7 +375,11 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
   }
   
   if(m1){
-    if(species_in_columns) x <- x[1, ] else x <- x[, 1]
+    if(species_in_columns) x <- unlist(x[1, ]) else {
+      nom <- rownames(x)
+      x <- x[, 1]         # se convierte en un vector (pero queda sin nombres)
+      names(x) <- nom     # se asignan nombres
+    }
     if(is.null(names(x))) names(x) <- paste0('sp', 1:length(x))
     res <- rad_v_to_df(x, decreasing = decreasing, n_ind = n_ind, s_keep = s_keep,  
                        name_others = name_others, max_fr_acum = max_fr_acum)
