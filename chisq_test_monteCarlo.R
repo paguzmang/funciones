@@ -79,8 +79,9 @@ chisq_test_monteCarlo <- function(x, fixed_total = c(1,2,3)[1],
   # GRAFICO:
   if(plot){
     tit <- paste0('X2.simul\n', ifelse(p.value < 0.001, 'p value < 0.001', paste0('p value = ', p.value)))
-    hist(X2.simul, main = tit, xlim = c(0, res.test$statistic*1.05))
+    hist(X2.simul, main = tit, xlim = c(0, res.test$statistic*1.05), freq = FALSE)
     abline(v = res.test$statistic, col = 'red', lty = 2)
+    curve(dchisq(x, df = res.test$par), add = TRUE, col = 'blue', lwd = 2)
   }
   
   # IMPRESION:
