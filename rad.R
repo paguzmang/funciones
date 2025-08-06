@@ -5,7 +5,7 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
                 collapse_by = NULL, col_name_group = "group",
                 as_list = FALSE){
   
-  # Oct 2024 / Actualizado julio 2025
+  # Oct 2024 / Actualizado agosto 2025
   # paguzmang
   
   # DESCRIPCION:
@@ -77,7 +77,7 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
   # Valor -----
   # La funcion entrega, por defecto, un data.frame con el rango (k) y la frecuencia
   # de cada especie, en orden descendente o ascendente de acuerdo al argumento 'decreasing'.
-  # Cuando ya varias muestras o grupos, si as_list = TRUE, se entregará una lista de data.frame
+  # Cuando existan varias muestras o grupos, si as_list = TRUE, se entregará una lista de data.frame's
   
   # Codigo -----
   # Validacion del argumento x ----
@@ -131,7 +131,15 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
     # Se validan el tipo de dato en 'x':
     if(class(x) %in% c("character", "factor") ){
       x <- table(as.character(x))
+    } else {
+      if(mode(x) %in% c("numeric", "integer") ){
+        if(!is.null(names(x))) {
+          u <- xtabs(ab ~ sp, data = data.frame(sp = names(x), ab = unname(x)))
+          x <- setNames(unname(u), names(u) )
+        }
+      }
     }
+    
     class(x) <- NULL
     if(is.null(names(x))) names(x) <- paste0('sp', 1:length(x))  # si no hay nombres que lo asigne
     x <- sort(x[x > 0], decreasing = T)
@@ -440,7 +448,7 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
   # sum(ab)  # debe dar 500
   # length(ab)  # riqueza
   # 
-  # # Se aplica la funcion rad_lump
+  # # Se aplica la funcion rad
   # res <- rad(x = ab, s_keep = NULL)                    # no se agrupa
   # str(res)  # revise la estructura del objeto
   # res       # imprima el objeto
@@ -489,6 +497,5 @@ rad <- function(x, s_keep = NULL, max_fr_acum = NULL, decreasing = TRUE,
   # ggplot(rad_dune, aes(x = k, y = fr, color = Use)) +
   #   geom_line() +
   #   labs(x = "rank de Especies", y = "Abundancia (%)")
-  
   
 }
